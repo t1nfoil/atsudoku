@@ -107,7 +107,7 @@ func TestValidateBoard(t *testing.T) {
 			}},
 			false,
 		},
-		// Add more cases
+		// TODO Add more cases (test unique per 3x3)
 	}
 
 	for _, test := range tests {
