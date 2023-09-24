@@ -149,14 +149,12 @@ func (s *SudokuBoard) generateBoard() {
 
 		for {
 			numberOfIterations++
-			randomRowOffset := rnd.Intn(3)
-			randomColumnOffset := rnd.Intn(3)
+			rndRow := grid[gridNumber].row + rnd.Intn(3)
+			rndCol := grid[gridNumber].column + rnd.Intn(3)
 
-			if s.getValue(grid[gridNumber].row+randomRowOffset, grid[gridNumber].column+randomColumnOffset) == 0 {
-				if !s.doesNumExistInColumn(grid[gridNumber].column+randomColumnOffset, sudokuNumber) && !s.doesNumExistInRow(grid[gridNumber].row+randomRowOffset, sudokuNumber) {
-					s.setValue(grid[gridNumber].row+randomRowOffset, grid[gridNumber].column+randomColumnOffset, sudokuNumber)
-					goto next
-				}
+			if s.getValue(rndRow, rndCol) == 0 && !s.doesNumExistInColumn(rndCol, sudokuNumber) && !s.doesNumExistInRow(rndRow, sudokuNumber) {
+				s.setValue(rndRow, rndCol, sudokuNumber)
+				goto next
 			}
 
 			if numberOfAttempts > 200 {
@@ -305,7 +303,6 @@ func (s *SudokuBoard) displayInfo(elapsedTime time.Duration) {
 			for column := 0; column <= 8; column++ {
 				bgColor := s.getBgColorForRowCol(row, column)
 				fmt.Printf("\033[%dm\033[%dm\033[%d;%dH%d", 97, bgColor, 7+row, 25+column, s.solution[row][column])
-				//fmt.Printf("\033[%d;%dH%d ", 10+row, 10+column, s.solution[row][column])
 			}
 		}
 		fmt.Print("\033[u")
