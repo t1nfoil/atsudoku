@@ -71,10 +71,6 @@ func (s *SudokuBoard) getValueSud(row, column int) int {
 	return s.sudoku[row][column]
 }
 
-func (s *SudokuBoard) setValueSud(row, column, value int) {
-	s.sudoku[row][column] = value
-}
-
 func (s *SudokuBoard) backTrack(value int) {
 	for row := 0; row <= 8; row++ {
 		for column := 0; column <= 8; column++ {
