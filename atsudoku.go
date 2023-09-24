@@ -20,6 +20,7 @@ func main() {
 		return
 	}
 
+	// save cursor position, clear screen
 	fmt.Printf("\0337\033[2J")
 
 	p := tea.NewProgram(initialModel())
@@ -28,22 +29,6 @@ func main() {
 		os.Exit(1)
 	}
 
+	// clear screen, restore cursor
 	fmt.Printf("\033[2J\0338")
-
-	// s.generatePuzzle("easy")
-
-	// s.printPuzzle()
-
-	// fmt.Print("\033[H\033[2J")
-
-	// // print the puzzle board using font characters, increment columns by 11 and rows by 7
-
-	// for row := 0; row <= 8; row++ {
-	// 	for column := 0; column <= 8; column++ {
-	// 		number := font[s.puzzle[row][column]]
-	// 		number.printFontCharacter((row*5)+2, column*9+55, 36, 40)
-	// 	}
-	// }
-
-	//s.printPuzzle()
 }
