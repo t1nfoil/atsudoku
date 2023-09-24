@@ -150,7 +150,8 @@ func (m model) Init() tea.Cmd {
 	s.setBoardInitValues()
 	for {
 		s.generateBoard()
-		if s.validateBoard() {
+
+		if s.validateSolution() {
 			break
 		}
 		s.setBoardInitValues()
@@ -223,7 +224,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			s.setBoardInitValues()
 			for {
 				s.generateBoard()
-				if s.validateBoard() {
+				if s.validateSolution() {
 					break
 				}
 				s.setBoardInitValues()

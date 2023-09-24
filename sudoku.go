@@ -15,10 +15,10 @@ type SudokuBoard struct {
 	userFillable [9][9]bool
 }
 
-func (s *SudokuBoard) doesNumExistInRow(row, value int) bool {
+func (s *SudokuBoard) doesNumExistInRowSol(row, value int) bool {
 	if row >= 0 && row <= 8 {
 		for column := 0; column <= 8; column++ {
-			if s.getValue(row, column) == value {
+			if s.getValueSol(row, column) == value {
 				return true
 			}
 		}
@@ -26,10 +26,10 @@ func (s *SudokuBoard) doesNumExistInRow(row, value int) bool {
 	return false
 }
 
-func (s *SudokuBoard) doesNumExistInColumn(column, value int) bool {
+func (s *SudokuBoard) doesNumExistInColumnSol(column, value int) bool {
 	if column >= 0 && column <= 8 {
 		for row := 0; row <= 8; row++ {
-			if s.getValue(row, column) == value {
+			if s.getValueSol(row, column) == value {
 				return true
 			}
 		}
@@ -37,12 +37,42 @@ func (s *SudokuBoard) doesNumExistInColumn(column, value int) bool {
 	return false
 }
 
-func (s *SudokuBoard) getValue(row, column int) int {
+func (s *SudokuBoard) doesNumExistInRowSud(row, value int) bool {
+	if row >= 0 && row <= 8 {
+		for column := 0; column <= 8; column++ {
+			if s.getValueSud(row, column) == value {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func (s *SudokuBoard) doesNumExistInColumnSud(column, value int) bool {
+	if column >= 0 && column <= 8 {
+		for row := 0; row <= 8; row++ {
+			if s.getValueSud(row, column) == value {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func (s *SudokuBoard) getValueSol(row, column int) int {
 	return s.solution[row][column]
 }
 
-func (s *SudokuBoard) setValue(row, column, value int) {
+func (s *SudokuBoard) setValueSol(row, column, value int) {
 	s.solution[row][column] = value
+}
+
+func (s *SudokuBoard) getValueSud(row, column int) int {
+	return s.sudoku[row][column]
+}
+
+func (s *SudokuBoard) setValueSud(row, column, value int) {
+	s.sudoku[row][column] = value
 }
 
 func (s *SudokuBoard) backTrack(value int) {
@@ -63,7 +93,7 @@ func (s *SudokuBoard) setBoardInitValues() {
 	}
 }
 
-func (s *SudokuBoard) validateBoard() bool {
+func (s *SudokuBoard) validateSolution() bool {
 	for row := 0; row <= 8; row++ {
 		for column := 0; column <= 8; column++ {
 			if s.solution[row][column] == 0 {
@@ -74,7 +104,7 @@ func (s *SudokuBoard) validateBoard() bool {
 
 	for row := 0; row <= 8; row++ {
 		for column := 1; column <= 9; column++ {
-			if !s.doesNumExistInRow(row, column) {
+			if !s.doesNumExistInRowSol(row, column) {
 				return false
 			}
 		}
@@ -82,7 +112,7 @@ func (s *SudokuBoard) validateBoard() bool {
 
 	for row := 0; row <= 8; row++ {
 		for column := 1; column <= 9; column++ {
-			if !s.doesNumExistInColumn(row, column) {
+			if !s.doesNumExistInColumnSol(row, column) {
 				return false
 			}
 		}
@@ -93,7 +123,50 @@ func (s *SudokuBoard) validateBoard() bool {
 	for row := 0; row <= 8; row++ {
 		for number := 1; number <= 9; number++ {
 			for column := 0; column <= 8; column++ {
-				if s.getValue(gridCells[row].row+column/3, gridCells[row].column+column%3) == number {
+				if s.getValueSol(gridCells[row].row+column/3, gridCells[row].column+column%3) == number {
+					break
+				}
+				if column == 8 {
+					return false
+				}
+			}
+		}
+	}
+
+	return true
+}
+
+func (s *SudokuBoard) validateSudoku() bool {
+	for row := 0; row <= 8; row++ {
+		for column := 0; column <= 8; column++ {
+			if s.sudoku[row][column] == 0 {
+				return false
+			}
+		}
+	}
+
+	for row := 0; row <= 8; row++ {
+		for column := 1; column <= 9; column++ {
+			if !s.doesNumExistInRowSud(row, column) {
+				return false
+			}
+		}
+	}
+
+	for row := 0; row <= 8; row++ {
+		for column := 1; column <= 9; column++ {
+			if !s.doesNumExistInColumnSud(row, column) {
+				return false
+			}
+		}
+	}
+
+	var gc gridCell
+	gridCells := gc.getGrid()
+	for row := 0; row <= 8; row++ {
+		for number := 1; number <= 9; number++ {
+			for column := 0; column <= 8; column++ {
+				if s.getValueSud(gridCells[row].row+column/3, gridCells[row].column+column%3) == number {
 					break
 				}
 				if column == 8 {
@@ -152,8 +225,8 @@ func (s *SudokuBoard) generateBoard() {
 			rndRow := grid[gridNumber].row + rnd.Intn(3)
 			rndCol := grid[gridNumber].column + rnd.Intn(3)
 
-			if s.getValue(rndRow, rndCol) == 0 && !s.doesNumExistInColumn(rndCol, sudokuNumber) && !s.doesNumExistInRow(rndRow, sudokuNumber) {
-				s.setValue(rndRow, rndCol, sudokuNumber)
+			if s.getValueSol(rndRow, rndCol) == 0 && !s.doesNumExistInColumnSol(rndCol, sudokuNumber) && !s.doesNumExistInRowSol(rndRow, sudokuNumber) {
+				s.setValueSol(rndRow, rndCol, sudokuNumber)
 				goto next
 			}
 
@@ -278,21 +351,28 @@ func (s *SudokuBoard) displayPuzzle(gridX, gridY int) {
 }
 
 func (s *SudokuBoard) displayInfo(elapsedTime time.Duration) {
-
 	fmt.Printf("\033[3;8HSudoku Difficulty: %s   ", s.difficulty)
 	s.sudokuSolved = true
+	sudokuStatus := "Solved"
 	for row := 0; row <= 8; row++ {
+		// check against generated board
 		for column := 0; column <= 8; column++ {
 			if s.sudoku[row][column] != s.solution[row][column] {
 				s.sudokuSolved = false
 			}
 		}
+
+		if !s.sudokuSolved {
+			// check for novel solutions
+			s.sudokuSolved = s.validateSudoku()
+			sudokuStatus = "Solved (Unique Solution!)"
+		}
 	}
-	sudokuStatus := "Solved"
+
 	if !s.sudokuSolved {
 		sudokuStatus = "Unsolved"
 	}
-	fmt.Printf("\033[4;8HSudoku Status: %s   ", sudokuStatus)
+	fmt.Printf("\033[4;8HSudoku Status: %s                       ", sudokuStatus)
 
 	fmt.Printf("\033[5;8HElapsed Time: %s   ", elapsedTime)
 

@@ -30,3 +30,6 @@
     n: Cycle new board / difficulty
 
 Enjoy playing Sudoku!
+
+Note: There may be more than one solution to a Sudoku! The hint may just be one
+of many, if you find an alternate valid solution, you will receive credit for solving the puzzle!
